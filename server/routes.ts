@@ -16,32 +16,38 @@ export async function registerRoutes(
 
   app.post(api.products.create.path, async (req, res) => {
     try {
+      console.log("Creating product with body:", req.body);
       const input = api.products.create.input.parse(req.body);
       const product = await storage.createProduct(input);
       res.status(201).json(product);
     } catch (err) {
+      console.error("Product creation error:", err);
       if (err instanceof z.ZodError) {
         return res.status(400).json({
           message: err.errors[0].message,
+          errors: err.errors
         });
       }
-      throw err;
+      res.status(500).json({ message: "Internal server error during product creation" });
     }
   });
 
   app.patch("/api/products/:id", async (req, res) => {
     try {
+      console.log(`Updating product ${req.params.id} with body:`, req.body);
       const input = api.products.create.input.partial().parse(req.body);
       const product = await storage.updateProduct(Number(req.params.id), input);
       if (!product) return res.status(404).json({ message: "Product not found" });
       res.json(product);
     } catch (err) {
+      console.error("Product update error:", err);
       if (err instanceof z.ZodError) {
         return res.status(400).json({
           message: err.errors[0].message,
+          errors: err.errors
         });
       }
-      throw err;
+      res.status(500).json({ message: "Internal server error during product update" });
     }
   });
 
