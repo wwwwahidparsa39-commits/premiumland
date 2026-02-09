@@ -12,8 +12,7 @@ if (!process.env.DATABASE_URL) {
 
 export const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
-  connectionTimeoutMillis: 10000, // 10 seconds timeout
+  connectionTimeoutMillis: 10000,
 });
 
 pool.on('error', (err) => {
