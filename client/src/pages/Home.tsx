@@ -22,25 +22,25 @@ export default function Home() {
       </div>
 
       {/* Hero Title */}
-      <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-8 text-foreground">
+      <h1 className="text-5xl md:text-8xl font-black tracking-tight mb-8 text-foreground leading-tight">
         اشتراک‌های <span className="text-cyan-500 text-glow inline-block hover:scale-105 transition-transform duration-300">هوشمند</span> دیجیتال
       </h1>
 
-      <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-12 leading-relaxed">
+      <p className="text-lg md:text-2xl text-muted-foreground max-w-3xl mb-12 leading-relaxed">
         دسترسی نامحدود به دنیای دیجیتال با بهترین قیمت و ضمانت بازگشت وجه. 
         تحویل آنی و پشتیبانی ۲۴ ساعته در پرمیوم لند.
       </p>
 
       {/* CTA Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 w-full justify-center px-4">
+      <div className="flex flex-col sm:flex-row gap-6 w-full justify-center px-4">
         <Link href="/shop">
-          <Button size="lg" className="w-full sm:w-auto text-lg h-14 rounded-2xl bg-cyan-500 text-black hover:bg-cyan-400 hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.4)] transition-all font-bold">
+          <Button size="lg" className="w-full sm:w-auto text-xl h-16 px-10 rounded-2xl bg-cyan-500 text-black hover:bg-cyan-400 hover:shadow-[0_0_40px_-5px_rgba(6,182,212,0.5)] transition-all font-bold">
             مشاهده محصولات
-            <ArrowLeft className="w-5 h-5 mr-2" />
+            <ArrowLeft className="w-6 h-6 mr-2" />
           </Button>
         </Link>
         <Link href="/admin">
-          <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg h-14 rounded-2xl border-border bg-background hover:bg-accent transition-all">
+          <Button size="lg" variant="outline" className="w-full sm:w-auto text-xl h-16 px-10 rounded-2xl border-border bg-background hover:bg-accent transition-all font-bold">
             پنل مدیریت
           </Button>
         </Link>

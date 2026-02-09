@@ -10,7 +10,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   return (
-    <div className="group relative overflow-hidden rounded-3xl bg-card border border-border hover:border-cyan-500/50 transition-all duration-300 shadow-sm hover:shadow-[0_0_30px_-10px_rgba(6,182,212,0.15)] flex flex-col h-full">
+    <div className="group relative overflow-hidden rounded-3xl bg-card border border-border hover:border-cyan-400 hover:shadow-[0_0_35px_rgba(34,211,238,0.7)] hover:scale-[1.02] transition-all duration-300 shadow-sm flex flex-col h-full">
       {/* Image Container with Glow Effect */}
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent z-10 opacity-60" />
