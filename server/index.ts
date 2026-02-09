@@ -53,4 +53,7 @@ app.use((req, res, next) => {
   httpServer.listen(port, "0.0.0.0", () => {
     log(`serving on port ${port}`);
   });
-})();
+})().catch(err => {
+  console.error("Critical server error:", err);
+  process.exit(1);
+});
