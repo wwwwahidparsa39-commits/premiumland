@@ -1,37 +1,11 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { serveStatic } from "./static";
+import { setupVite, serveStatic, log } from "./vite";
 import { createServer } from "http";
 
 const app = express();
-const httpServer = createServer(app);
-
-declare module "http" {
-  interface IncomingMessage {
-    rawBody: unknown;
-  }
-}
-
-app.use(
-  express.json({
-    verify: (req, _res, buf) => {
-      req.rawBody = buf;
-    },
-  }),
-);
-
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-export function log(message: string, source = "express") {
-  const formattedTime = new Date().toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
-
-  console.log(`${formattedTime} [${source}] ${message}`);
-}
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -51,7 +25,6 @@ app.use((req, res, next) => {
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
-
       log(logLine);
     }
   });
@@ -59,39 +32,25 @@ app.use((req, res, next) => {
   next();
 });
 
-// Export app for Vercel Serverless Functions
-export default app;
+(async () => {
+  const httpServer = createServer(app);
+  await registerRoutes(httpServer, app);
 
-if (process.env.NODE_ENV !== "production") {
-  (async () => {
-    await registerRoutes(httpServer, app);
-
-    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-      const status = err.status || err.statusCode || 500;
-      const message = err.message || "Internal Server Error";
-
-      res.status(status).json({ message });
-      throw err;
-    });
-
-    const { setupVite } = await import("./vite");
-    await setupVite(httpServer, app);
-
-    const port = parseInt(process.env.PORT || "5000", 10);
-    httpServer.listen(
-      {
-        port,
-        host: "0.0.0.0",
-        reusePort: true,
-      },
-      () => {
-        log(`serving on port ${port}`);
-      },
-    );
-  })();
-} else {
-  // In production (Vercel), we just register routes and let Vercel handle the rest
-  registerRoutes(httpServer, app).catch(err => {
-    console.error("Failed to register routes:", err);
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+    res.status(status).json({ message });
+    throw err;
   });
-}
+
+  if (process.env.NODE_ENV !== "production") {
+    await setupVite(httpServer, app);
+  } else {
+    serveStatic(app);
+  }
+
+  const port = parseInt(process.env.PORT || "5000", 10);
+  httpServer.listen(port, "0.0.0.0", () => {
+    log(`serving on port ${port}`);
+  });
+})();
