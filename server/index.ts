@@ -1,11 +1,28 @@
 import express, { type Request, Response, NextFunction } from "express";
+import session from "express-session";
 import { registerRoutes } from "./routes";
+import authRoutes from "./auth";
 import { setupVite, serveStatic, log } from "./vite";
 import { createServer } from "http";
+import { seedAdminUser } from "./seed";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Session configuration
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "premium-land-secret-key-change-in-production",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  })
+);
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -34,6 +51,14 @@ app.use((req, res, next) => {
 
 (async () => {
   const httpServer = createServer(app);
+  
+  // Seed admin user on startup
+  await seedAdminUser();
+  
+  // Register auth routes
+  app.use(authRoutes);
+  
+  // Register API routes
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
