@@ -54,7 +54,7 @@ app.post('/api/products', async (req, res) => {
   }
 });
 
-app.put('/api/products/:id', async (req, res) => {
+app.patch('/api/products/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);
     const [updated] = await db.update(products).set(req.body).where(eq(products.id, id)).returning();
@@ -65,41 +65,21 @@ app.put('/api/products/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/products/:id', async (req, res) => {
-  try {
-    const id = Number(req.params.id);
-    await db.delete(products).where(eq(products.id, id));
-    res.status(204).send();
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Ads (Announcements) CRUD
-app.get('/api/announcements', async (_req, res) => {
-  try {
-    const result = await db.select().from(announcements).orderBy(desc(announcements.createdAt));
-    res.json(result);
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/api/announcements', async (req, res) => {
-  try {
-    const [ad] = await db.insert(announcements).values(req.body).returning();
-    res.status(201).json(ad);
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.put('/api/announcements/:id', async (req, res) => {
+app.patch('/api/announcements/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);
     const [updated] = await db.update(announcements).set(req.body).where(eq(announcements.id, id)).returning();
     if (!updated) return res.status(404).json({ error: 'Ad not found' });
     res.json(updated);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/announcements/active', async (_req, res) => {
+  try {
+    const result = await db.select().from(announcements).where(eq(announcements.isActive, true)).orderBy(announcements.order);
+    res.json(result);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

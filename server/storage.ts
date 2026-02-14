@@ -49,7 +49,7 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(announcements)
-      .where(and(eq(announcements.isActive, true), eq(announcements.isActive, true)))
+      .where(eq(announcements.isActive, true))
       .orderBy(announcements.order);
   }
 
